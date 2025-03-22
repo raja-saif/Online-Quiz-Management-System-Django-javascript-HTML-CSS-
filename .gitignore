@@ -1,0 +1,72 @@
+# ==============================
+# Git Ignore for Django Project
+# ==============================
+
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore logs
+*.log
+*.out
+*.err
+logs/
+*.pid
+
+# Ignore environment variables and secrets
+.env
+.env.*
+*.secret
+
+# Ignore database files
+db.sqlite3
+db.sqlite3-journal
+
+# Ignore virtual environments
+venv/
+env/
+venv.bak/
+.env.bak/
+Pipfile
+Pipfile.lock
+
+# Ignore Django migrations (optional)
+**/migrations/
+**/migrations/*.pyc
+**/migrations/*.py
+!**/migrations/__init__.py  # Keep init file for Django apps
+
+# Ignore media and static files (optional)
+media/
+staticfiles/
+static/
+*.sass-cache
+*.map
+
+# Ignore Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Ignore compiled files
+*.so
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore IDE and editor configurations
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+
+# Ignore macOS system files
+.DS_Store
+Thumbs.db
+
+# Ignore Node modules (if using React/Vue with Django)
+node_modules/
+npm-debug.log
+yarn-error.log
+
