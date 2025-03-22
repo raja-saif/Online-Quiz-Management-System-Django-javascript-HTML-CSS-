@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "seApp"
+    "seApp",
+    "django_browser_reload",
 ]
 
 MIDDLEWARE = [

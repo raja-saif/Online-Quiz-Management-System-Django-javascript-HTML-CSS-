@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load django_browser_reload %}
+{% django_browser_reload_script %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Sign Up</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section - System Name & Animation -->
+        <div class="welcome-section">
+            <h1>Online Quiz & Exam System</h1>
+            <p>Sign up and start managing your quizzes effortlessly.</p>
+        </div>
+
+        <!-- Right Section - Form -->
+        <div class="form-section">
+            <h2>Student Sign Up</h2>
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Name & Roll No -->
+                <div class="input-group">
+                    <div class="field">
+                        {{ form.name.label }} {{ form.name }}
+                    </div>
+                    <div class="field">
+                        {{ form.roll_no.label }} {{ form.roll_no }}
+                    </div>
+                </div>
+
+                <!-- Section & Batch No -->
+                <div class="input-group">
+                    <div class="field">
+                        {{ form.section.label }} {{ form.section }}
+                    </div>
+                    <div class="field">
+                        {{ form.batch_no.label }} {{ form.batch_no }}
+                    </div>
+                </div>
+
+                <!-- Password & Confirm Password -->
+                <div class="input-group">
+                    <div class="field">
+                        {{ form.password1.label }} {{ form.password1 }}
+                    </div>
+                    <div class="field">
+                        Confirm Password {{ form.password2 }}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">Sign Up</button>
+
+                <div class="signup-option">
+                    <span>Already registered? <a href="{% url 'seApp:login' %}">Login</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

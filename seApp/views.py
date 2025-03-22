@@ -1,11 +1,153 @@
 from django.shortcuts import render
-
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import StudentSignUpForm
 # Create your views here.
 
 
 
 def loginPage(request):
     return render(request, 'login.html') 
+
+
+def SignupPage(request):
+    return render(request, 'signup.html') 
+
+
+
+def student_signup(request):
+    if request.method == "POST":
+        form = StudentSignUpForm(request.POST)
+        if form.is_valid():
+            student = form.save()
+            login(request, student)  # Log in the student automatically
+            return redirect("dashboard")  # Redirect to a dashboard after signup
+    else:
+        form = StudentSignUpForm()
+
+    return render(request, "signup.html", {"form": form})
+
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import Question, Quiz, QuizQuestion
+from .forms import QuizForm, QuizQuestionForm
+
+# Quiz Creation Page
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Quiz, Question, QuizQuestion
+from .forms import QuizForm
+
+def create_quiz(request):
+    if request.method == "POST":
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save(commit=False)
+            quiz.instructor = request.user
+            quiz.subject = request.POST.get("subject")  # Save selected subject
+            quiz.save()
+
+            selected_questions = request.POST.getlist('questions[]')  # Get selected question IDs
+            total_marks = 0
+
+            for question_id in selected_questions:
+                try:
+                    question = Question.objects.get(id=question_id)
+                    marks = int(request.POST.get(f"marks_{question_id}", 0))  # Get marks for each question
+                    total_marks += marks
+                    QuizQuestion.objects.create(quiz=quiz, question=question, marks=marks)  # Save question
+                except Question.DoesNotExist:
+                    print(f"Question with ID {question_id} not found.")
+
+            quiz.total_marks = total_marks
+            quiz.save()
+
+            return redirect("seApp:view_quiz", quiz_id=quiz.id)  # FIX: Correct redirect
+
+    else:
+        form = QuizForm()
+
+    subjects = Question.objects.values_list("subject", flat=True).distinct()
+    return render(request, "quizCreate.html", {"form": form, "subjects": subjects})
+
+
+
+# Fetch questions based on selected subject (AJAX Call)
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Question
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+
+
+# Modified view to accept GET requests as well
+
+@csrf_exempt  # For easier testing - remove in production
+def get_questions(request):
+    print(f"Request method: {request.method}")
+    
+    # Handle GET requests
+    if request.method == "GET":
+        # Get subject from query parameters
+        subject = request.GET.get("subject", "").strip().lower()
+        print(f"GET subject: {subject}")
+        
+        if not subject:
+            # Return all subjects if no subject specified
+            subjects = list(Question.objects.values_list("subject", flat=True).distinct())
+            return JsonResponse({"subjects": subjects}, safe=False)
+        
+        # Return questions for the specified subject
+        questions = list(Question.objects.filter(subject=subject).values("id", "text", "question_type"))
+        return JsonResponse(questions, safe=False)
+    
+    # Handle POST requests
+    elif request.method == "POST":
+        try:
+            # Parse JSON data from request body
+            body = request.body.decode('utf-8')
+            print(f"POST body: {body}")
+            
+            data = json.loads(body)
+            subject = data.get("subject", "").strip().lower()
+            print(f"POST subject: {subject}")
+            
+            if not subject:
+                return JsonResponse({"error": "Subject not provided"}, status=400)
+            
+            # Return questions for the specified subject
+            questions = list(Question.objects.filter(subject=subject).values("id", "text", "question_type"))
+            return JsonResponse(questions, safe=False)
+            
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {str(e)}")
+            return JsonResponse({"error": f"Invalid JSON: {str(e)}"}, status=400)
+        except Exception as e:
+            print(f"Exception: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    # Reject other request methods
+    else:
+        return JsonResponse({"error": f"Only GET and POST requests are allowed. You sent: {request.method}"}, status=405)
+
+def test_questions_api(request):
+    """A simple test page to check our API endpoint"""
+    return render(request, 'test_api.html')
+
+@login_required
+def quiz_detail(request, quiz_id):
+    """View for displaying a quiz's details"""
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz_questions = QuizQuestion.objects.filter(quiz=quiz).select_related('question')
+    
+    return render(request, 'quizView.html', {
+        'quiz': quiz,
+        'quiz_questions': quiz_questions,
+    })
+
 '''
 def signup(request):
     if request.method == 'POST':

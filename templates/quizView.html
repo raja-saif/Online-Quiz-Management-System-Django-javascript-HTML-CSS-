@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ quiz.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/quizView.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-header">
+            <h1>{{ quiz.title }}</h1>
+            <div class="quiz-meta">
+                <p><strong>Instructor:</strong> {{ quiz.instructor.username }}</p>
+                <p><strong>Subject:</strong> {{ quiz.get_subject_display }}</p>  <!-- Added this line -->
+                <p><strong>Total Marks:</strong> {{ quiz.total_marks }}</p>
+                <p><strong>Created:</strong> {{ quiz.created_at|date:"F j, Y" }}</p>
+            </div>
+            
+        </div>
+
+        <div class="quiz-content">
+            <h2>Questions</h2>
+            
+            {% for question in quiz_questions %}
+            <div class="question-card">
+                <div class="question-header">
+                    <span class="question-number">Question {{ forloop.counter }}</span>
+                    <span class="question-marks">{{ question.marks }} marks</span>
+                </div>
+                <div class="question-text">
+                    <p>{{ question.question.text }}</p>
+                </div>
+                <div class="question-meta">
+                    <span class="question-type">Type: {{ question.question.question_type }}</span>
+                    <span class="question-subject">Subject: {{ question.question.get_subject_display }}</span>
+                </div>
+                
+                <div class="answer-section">
+                    {% if question.question.question_type == 'MCQ' %}
+                    <div class="mcq-options">
+                        <p><strong>Answer Options:</strong></p>
+                        <!-- You can fetch and display MCQ options here if you have them in your model -->
+                    </div>
+                    {% else %}
+                    <div class="answer-box">
+                        <textarea placeholder="Enter your answer here" class="answer-input"></textarea>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="no-questions">No questions added to this quiz yet.</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Only show the submit button if you're implementing student responses -->
+        <div class="quiz-actions">
+            <button class="submit-btn">Submit Quiz</button>
+           
+        </div>
+    </div>
+</body>
+</html>

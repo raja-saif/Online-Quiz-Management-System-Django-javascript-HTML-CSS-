@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load django_browser_reload %}
+    {% django_browser_reload_script %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/quizCreate.css' %}">
+    <script src="{% static 'js/quizCreate.js' %}" defer></script>
+<body>
+    <div class="container">
+        <h1>Quiz/Exam Creation</h1>
+        
+        <!-- CSRF Token - this is crucial -->
+        {% csrf_token %}
+
+        <!-- Quiz Information -->
+<div class="quiz-info">
+    <label>Quiz Title:</label> <input type="text" id="quizTitle" placeholder="Enter quiz title">
+    <label>Instructor Name:</label> <input type="text" id="instructorName" placeholder="Enter instructor name">
+</div>
+
+<!-- Subject Selection -->
+<div class="subject-selection">
+    <label for="quizSubject">Choose Subject:</label>
+    <select id="quizSubject">
+        <option value="" disabled selected>Select Subject</option>
+        <option value="math">Mathematics</option>
+        <option value="science">Science</option>
+        <option value="history">History</option>
+    </select>
+</div>
+
+
+        <!-- Subject Selection -->
+        <div class="subject-selection">
+            <label for="subject">Choose Subject:</label>
+            <select id="subject">
+                <option value="" disabled selected>Select Subject</option>
+                <option value="math">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="history">History</option>
+            </select>
+        </div>
+
+        <!-- Question Selection -->
+        <div class="questions-container">
+            <h2>Available Questions</h2>
+            <div id="questions-list"></div>
+        </div>
+
+        <!-- Selected Questions -->
+        <div class="selected-questions">
+            <h2>Selected Questions</h2>
+            <ul id="selected-questions-list"></ul>
+        </div>
+
+        <!-- Quiz Summary -->
+        <div class="quiz-summary">
+            <label>Total Marks:</label> <span id="total-marks">0</span>
+        </div>
+
+        <button id="createQuiz">Create Quiz</button>
+    </div>
+
+</body>
+</html>
