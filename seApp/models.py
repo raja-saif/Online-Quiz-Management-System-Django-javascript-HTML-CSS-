@@ -1,34 +1,63 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
-class Student(AbstractUser):
-    """ Custom Student model extending Django's User model """
-    name = models.CharField(max_length=100)
-    father_name = models.CharField(max_length=100)
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
+
+class CustomUserManager(BaseUserManager):
+    """ Custom user manager for handling different user roles (students & teachers). """
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError("The Username field must be set")
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(username, password, **extra_fields)
+
+
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
+from django.db import models
+
+class CustomUser(AbstractUser):
+    """ Custom user model for Students & Teachers """
+    USER_TYPE_CHOICES = (
+        ('student', 'Student'),
+        ('teacher', 'Teacher'),
+    )
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+
+    # Fix group and permission conflicts
+    groups = models.ManyToManyField(Group, related_name="customuser_groups", blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name="customuser_permissions", blank=True)
+
+    def __str__(self):
+        return f"{self.username} ({self.get_user_type_display()})"
+
+
+class Student(models.Model):
+    """ Student Profile (Linked to CustomUser) """
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)  # TEMPORARY FIX
+    Sname = models.CharField(max_length=30,null=True, blank=True)#abhi k liye null set kiyua
     roll_no = models.CharField(max_length=20, unique=True)
     section = models.CharField(max_length=10)
     batch_no = models.CharField(max_length=10)
 
-    # Fix conflicts with default User model
-    groups = models.ManyToManyField(
-        "auth.Group",
-        related_name="student_users",  # Add unique related_name
-        blank=True
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission",
-        related_name="student_users_permissions",  # Add unique related_name
-        blank=True
-    )
-
-    # Use roll_no as the username field
-    username = None  
-    USERNAME_FIELD = 'roll_no'
-    REQUIRED_FIELDS = ['name', 'father_name', 'section', 'batch_no']
-    
     def __str__(self):
-        return f"{self.name} ({self.roll_no})"
+        return f"{self.user.username if self.user else 'No User'} - {self.roll_no}"
 
+
+class Teacher(models.Model):
+    """ Teacher Profile (Linked to CustomUser) """
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    department = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.department}"
 
 
 # Question Bank

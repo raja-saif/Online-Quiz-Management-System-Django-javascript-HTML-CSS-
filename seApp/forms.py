@@ -4,15 +4,33 @@ from .models import Student
 from django import forms
 from .models import Quiz, QuizQuestion
 
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser, Student, Teacher
+
 class StudentSignUpForm(UserCreationForm):
-    name = forms.CharField(max_length=100, label="Full Name")
-    roll_no = forms.CharField(max_length=20, label="Roll Number")
-    section = forms.CharField(max_length=10, label="Section")
-    batch_no = forms.CharField(max_length=10, label="Batch Number")
+    Sname=forms.CharField(max_length=30)
+    roll_no = forms.CharField(max_length=20)
+    section = forms.CharField(max_length=10)
+    batch_no = forms.CharField(max_length=10)
 
     class Meta:
-        model = Student
-        fields = ['name', 'roll_no', 'section', 'batch_no', 'password1', 'password2']
+        model = CustomUser
+        fields = ["username", "password1", "password2"]
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.user_type = "student"
+        if commit:
+            user.save()
+            Student.objects.create(
+                user=user,
+                Sname=self.cleaned_data["name"],
+                roll_no=self.cleaned_data["roll_no"],
+                section=self.cleaned_data["section"],
+                batch_no=self.cleaned_data["batch_no"],
+            )
+        return user
 
 
 

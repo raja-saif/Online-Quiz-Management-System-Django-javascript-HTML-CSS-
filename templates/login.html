@@ -9,9 +9,9 @@
     <div class="container">
         <div class="welcome-section">
             <div class="logo"></div>
-            <h1>Welcome!</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <button class="learn-more-btn">Learn More</button>
+            <h1>Welcome to OQ&EMS!</h1>
+            <p>Sign up and start managing your quizzes effortlessly.</p>
+      
         </div>
         <div class="form-section">
             <h2>Sign in</h2>
@@ -25,9 +25,8 @@
                     <input type="password" id="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="submit-btn">Submit</button>
-                <button type="button" class="google-signin-btn">Sign in with Google</button>
                 <div class="signup-option">
-                    <span>Create an account? <a href="#">Sign Up</a></span>
+                    <span>Create an account? <a href="{% url 'seApp:signup' %}">Sign Up</a></span>
                 </div>
             </form>
         </div>

@@ -2,16 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .forms import StudentSignUpForm
+from django.contrib.auth.forms import AuthenticationForm
+
 # Create your views here.
-
-
-
-def loginPage(request):
-    return render(request, 'login.html') 
-
-
-def SignupPage(request):
-    return render(request, 'signup.html') 
 
 
 
@@ -20,13 +13,23 @@ def student_signup(request):
         form = StudentSignUpForm(request.POST)
         if form.is_valid():
             student = form.save()
-            login(request, student)  # Log in the student automatically
-            return redirect("dashboard")  # Redirect to a dashboard after signup
+            login(request, student)
+            return redirect("dashboard")  # Redirect after signup
     else:
         form = StudentSignUpForm()
-
     return render(request, "signup.html", {"form": form})
 
+
+def loginPage(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect("dashboard")  # Redirect to dashboard
+    else:
+        form = AuthenticationForm()
+    return render(request, "login.html", {"form": form})
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -62,7 +65,7 @@ def create_quiz(request):
             quiz.total_marks = total_marks
             quiz.save()
 
-            return redirect("seApp:view_quiz", quiz_id=quiz.id)  # FIX: Correct redirect
+            return redirect("seApp:view_quiz", quiz_title=quiz.title)  # FIX: Correct redirect
 
     else:
         form = QuizForm()
@@ -138,9 +141,9 @@ def test_questions_api(request):
     return render(request, 'test_api.html')
 
 @login_required
-def quiz_detail(request, quiz_id):
+def quiz_detail(request, quiz_title):
     """View for displaying a quiz's details"""
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz = get_object_or_404(Quiz, title=quiz_title)
     quiz_questions = QuizQuestion.objects.filter(quiz=quiz).select_related('question')
     
     return render(request, 'quizView.html', {
