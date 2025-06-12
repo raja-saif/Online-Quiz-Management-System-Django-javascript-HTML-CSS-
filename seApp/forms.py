@@ -9,31 +9,27 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Student, Teacher
 
 class StudentSignUpForm(UserCreationForm):
-    Sname=forms.CharField(max_length=30)
     roll_no = forms.CharField(max_length=20)
     section = forms.CharField(max_length=10)
     batch_no = forms.CharField(max_length=10)
 
     class Meta:
         model = CustomUser
-        fields = ["username", "password1", "password2"]
+        fields = ["username", "password1", "password2"]  # Required fields for signup
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.user_type = "student"
+        user.user_type = "student"  # Set user type
+
         if commit:
-            user.save()
-            Student.objects.create(
+            user.save()  # Save user first
+            Student.objects.create(  # Create student profile
                 user=user,
-                Sname=self.cleaned_data["name"],
                 roll_no=self.cleaned_data["roll_no"],
                 section=self.cleaned_data["section"],
                 batch_no=self.cleaned_data["batch_no"],
             )
         return user
-
-
-
 class QuizForm(forms.ModelForm):
     class Meta:
         model = Quiz

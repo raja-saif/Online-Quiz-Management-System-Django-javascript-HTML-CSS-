@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ request.user.username }}!</h1>
+        <nav>
+            <a href="{% url 'seApp:student_dashboard' %}">Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Available Quizzes</h2>
+        <ul>
+            {% for quiz in quizzes %}
+                <li>
+                    <strong>{{ quiz.title }}</strong> ({{ quiz.get_subject_display }}) - Created by {{ quiz.instructor.username }}
+                    <a href="{% url 'seApp:view_quiz' quiz.title %}">View Quiz</a>
+                </li>
+            {% empty %}
+                <p>No quizzes available at the moment.</p>
+            {% endfor %}
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 OQ-EMS. All rights reserved.</p>
+    </footer>
+</body>
+</html>

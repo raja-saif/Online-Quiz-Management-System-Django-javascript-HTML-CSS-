@@ -1,9 +1,16 @@
-<!-- index.html -->
-{% load django_browser_reload %}
-{% django_browser_reload_script %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
-<script src="{% static 'js/login.js' %}" defer></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load django_browser_reload %}
+    {% django_browser_reload_script %}
+    {% load static %}
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | OQ&EMS</title>
+    
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <script src="{% static 'js/login.js' %}" defer></script>
 </head>
 <body>
     <div class="container">
@@ -11,26 +18,31 @@
             <div class="logo"></div>
             <h1>Welcome to OQ&EMS!</h1>
             <p>Sign up and start managing your quizzes effortlessly.</p>
-      
         </div>
+
         <div class="form-section">
             <h2>Sign in</h2>
-            <form>
+            <form method="POST">
+                {% csrf_token %}  <!-- ✅ CSRF Protection -->
+                
                 <div class="input-group">
                     <label for="username">User Name</label>
-                    <input type="text" id="username" placeholder="User Name" required>
+                    <input type="text" id="username" name="username" placeholder="User Name" required> <!-- ✅ Added name="username" -->
                 </div>
+
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Password" required>
+                    <input type="password" id="password" name="password" placeholder="Password" required> <!-- ✅ Added name="password" -->
                 </div>
+
                 <button type="submit" class="submit-btn">Submit</button>
+                
                 <div class="signup-option">
                     <span>Create an account? <a href="{% url 'seApp:signup' %}">Sign Up</a></span>
                 </div>
             </form>
         </div>
     </div>
-    <script src="scripts.js"></script>
 </body>
 </html>
+

@@ -41,15 +41,14 @@ class CustomUser(AbstractUser):
 
 class Student(models.Model):
     """ Student Profile (Linked to CustomUser) """
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)  # TEMPORARY FIX
-    Sname = models.CharField(max_length=30,null=True, blank=True)#abhi k liye null set kiyua
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)  # Links to CustomUser
+    Sname = models.CharField(max_length=30, null=True, blank=True)
     roll_no = models.CharField(max_length=20, unique=True)
     section = models.CharField(max_length=10)
     batch_no = models.CharField(max_length=10)
 
     def __str__(self):
-        return f"{self.user.username if self.user else 'No User'} - {self.roll_no}"
-
+        return f"{self.user.username} - {self.roll_no}"
 
 class Teacher(models.Model):
     """ Teacher Profile (Linked to CustomUser) """
@@ -90,8 +89,7 @@ class Quiz(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE)
     total_marks = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(blank=True, null=True)  # Optional description for admin details
-    
+    description = models.TextField(blank=True, null=True)  # Optional description for admin details    
     subject = models.CharField(max_length=20, choices=Question.SUBJECT_CHOICES, default='math')  # Add Subject Field
 
     def __str__(self):

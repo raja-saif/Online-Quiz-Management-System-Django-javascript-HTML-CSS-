@@ -11,24 +11,35 @@ from django.contrib.auth.forms import AuthenticationForm
 def student_signup(request):
     if request.method == "POST":
         form = StudentSignUpForm(request.POST)
+        print("Form Valid:", form.is_valid())  # Debugging
+        print("Form Errors:", form.errors)  # Print errors
+
         if form.is_valid():
             student = form.save()
             login(request, student)
-            return redirect("dashboard")  # Redirect after signup
+            return redirect("seApp:student_dashboard")  # Redirect after signup
     else:
+        print("GET Request: Showing Signup Form")
         form = StudentSignUpForm()
+
     return render(request, "signup.html", {"form": form})
 
 
 def loginPage(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = AuthenticationForm(data=request.POST)
+        
+        print("Form Valid:", form.is_valid())  # Debugging
+        print("Form Errors:", form.errors)  # Print errors
+        print("Form Data:", form.data)
+
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("dashboard")  # Redirect to dashboard
+            return redirect("seApp:student_dashboard")  # Redirect to dashboard
     else:
         form = AuthenticationForm()
+
     return render(request, "login.html", {"form": form})
 
 from django.shortcuts import render, redirect
@@ -150,6 +161,12 @@ def quiz_detail(request, quiz_title):
         'quiz': quiz,
         'quiz_questions': quiz_questions,
     })
+
+def student_dashboard(request):
+    """Dashboard view for students showing available quizzes"""
+    quizzes = Quiz.objects.all()  # Show all quizzes
+    return render(request, "student_dashboard.html", {"quizzes": quizzes})
+
 
 '''
 def signup(request):

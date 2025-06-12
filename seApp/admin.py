@@ -2,7 +2,7 @@
 # Register your models here.
 
 from django.contrib import admin
-from .models import Question, Answer, Quiz, QuizQuestion
+from .models import Question, Answer, Quiz, QuizQuestion,Student
 
 # Register modelsfrom .models import Question, Answer, Quiz, QuizQuestion
 
@@ -41,3 +41,6 @@ class QuestionAdmin(admin.ModelAdmin):
 class AnswerAdmin(admin.ModelAdmin):
     list_display = ('question', 'correct_answer')
     search_fields = ('question__text', 'correct_answer')
+
+admin.site.register(Student)
+
