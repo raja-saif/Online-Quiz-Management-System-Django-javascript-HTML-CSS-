@@ -37,10 +37,9 @@ Pipfile.lock
 **/migrations/*.py
 !**/migrations/__init__.py  # Keep init file for Django apps
 
-# Ignore media and static files (optional)
+# Ignore media and collected static files (source static/ is tracked)
 media/
 staticfiles/
-static/
 *.sass-cache
 *.map
 

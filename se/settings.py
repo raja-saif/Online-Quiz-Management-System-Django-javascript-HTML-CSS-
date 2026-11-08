@@ -29,10 +29,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-i0jej90#grmyf%snask1gxtsg^$jl839ugz(ew=b-qz=9tn8&8"
+# Set DJANGO_SECRET_KEY in the environment; a random key is generated for local development if unset.
+from django.core.management.utils import get_random_secret_key
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or get_random_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = []
 

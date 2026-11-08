@@ -36,7 +36,7 @@ OQ-EMS is a Django web app for building quizzes from a subject-wise question ban
 ## 🧰 Tech stack
 - **Backend:** Python, Django, `django-browser-reload`
 - **Database:** SQLite
-- **Frontend:** Django templates, HTML, CSS and JavaScript (`fetch` calls to the JSON endpoint)
+- **Frontend:** Django templates, HTML, CSS and vanilla JavaScript (`quizCreate.js` loads questions from the JSON endpoint and submits the quiz)
 
 ## 📁 Project structure
 ```
@@ -45,6 +45,8 @@ OQ-EMS is a Django web app for building quizzes from a subject-wise question ban
 ├── se/                  # Django project (settings, urls, wsgi/asgi)
 ├── seApp/               # Main app: models, views, forms, urls, admin
 ├── templates/           # login, signup, student_dashboard, quizCreate, quizView, test_api
+├── static/              # css/ (page styles) and js/ (quizCreate.js, login.js)
+├── requirements.txt
 ├── SRS.docx             # Software Requirements Specification
 ├── Product Backlog.docx
 └── Sprint Backlog.docx
@@ -57,13 +59,14 @@ cd Online-Quiz-Management-System-Django-javascript-HTML-CSS-
 
 python -m venv venv
 # Windows: venv\Scripts\activate    macOS/Linux: source venv/bin/activate
-pip install django django-browser-reload
+pip install -r requirements.txt
 
 python manage.py makemigrations seApp   # migration files are not committed
 python manage.py migrate
 python manage.py createsuperuser        # to manage the question bank in /admin
 python manage.py runserver
 ```
+Optional environment variables: `DJANGO_SECRET_KEY` (a random key is generated for local development if it is unset) and `DJANGO_DEBUG` (`True` by default).
 Then open:
 - `http://127.0.0.1:8000/` to sign up
 - `/login/` to log in
